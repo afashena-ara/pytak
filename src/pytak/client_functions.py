@@ -189,8 +189,11 @@ async def create_udp_client(
     #bindall = sys.platform == "win32"
     if sys.platform == "linux":
         rsock.bind(("0.0.0.0", port))
-    else:
+    elif sys.platform == "win32":
         rsock.bind((""))
+    else:
+        print("Your OS is not necessarily supported. Binding the socket may not work. Defaulting to Linux functionality...")
+        rsock.bind(("0.0.0.0", port))
 
     reader = await from_socket(rsock)
 
