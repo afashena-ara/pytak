@@ -104,7 +104,7 @@ async def protocol_factory(  # NOQA pylint: disable=too-many-locals,too-many-bra
             ),
             0,
         )
-        multicast_ttl = config.get("PYTAK_MULTICAST_TTL", 1)
+        multicast_ttl = config.getint("PYTAK_MULTICAST_TTL", 1)
         reader, writer = await pytak.create_udp_client(
             cot_url, local_addr, multicast_ttl
         )
