@@ -426,6 +426,26 @@ class CLITool:
         for task in done:
             self._logger.info("Complete: %s", task)
 
+    async def close(self):
+        """Gracefully stop all running tasks."""
+        self._logger.info("Shutting down CLITool...")
+        
+        for task in self.running_tasks:
+            task.cancel()
+
+        results = await asyncio.gather(*self.running_tasks, return_exceptions=True)
+
+        for task, result in zip(self.running_tasks, results):
+            if isinstance(result, asyncio.CancelledError):
+                self._logger.debug("Cancelled: %s", task)
+            elif isinstance(result, Exception):
+                self._logger.warning("Exception in task %s: %s", task, result)
+            else:
+                self._logger.debug("Finished task %s with result %s", task, result)
+
+        self.running_tasks.clear()
+        self._logger.info("CLITool shut down complete.")
+
 
 @dataclass
 class SimpleCOTEvent:
